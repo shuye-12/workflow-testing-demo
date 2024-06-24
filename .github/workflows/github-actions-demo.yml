@@ -27,9 +27,9 @@ jobs:
         id: set-prebuild-package-name
         run: |
           OV_GIT_COMMIT_HASH_FULL=${{ github.event.inputs.ov_commit_hash }}
-          OV_GIT_COMMIT_HASH_SHORT=${ OV_GIT_COMMIT_HASH_FULL:0:10 }
+          OV_GIT_COMMIT_HASH_SHORT=${OV_GIT_COMMIT_HASH_FULL:0:10}
           VPUX_GIT_COMMIT_HASH_FULL=${{ github.event.inputs.vpux_commit_hash }}
-          VPUX_GIT_COMMIT_HASH_SHORT=${ VPUX_GIT_COMMIT_HASH_FULL:0:10 }  
+          VPUX_GIT_COMMIT_HASH_SHORT=${VPUX_GIT_COMMIT_HASH_FULL:0:10}  
           PREBUILD_PACKAGE_NAME="workflow-openvino-$OV_GIT_COMMIT_HASH_SHORT-vpux-$VPUX_GIT_COMMIT_HASH_SHORT"
           echo "Set Prebuild Package_name $PREBUILD_PACKAGE_NAME"
           echo "::set-output name=prebuild_package_version::$PREBUILD_PACKAGE_NAME"
