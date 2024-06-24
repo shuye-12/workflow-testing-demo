@@ -1,18 +1,34 @@
 name: GitHub Actions Demo
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: [push]
+on:
+  workflow_dispatch:
+    inputs:
+      ov_commit_hash:
+        description: 'OV commit Git Hash'
+        required: true
+      vpux_commit_hash:
+        description: 'VPUX commit Git Hash'
+        required: true
 jobs:
-  Explore-GitHub-Actions:
-    runs-on: self-hosted
+  #################################################
+  #   Job 1: Check and setup env. fm6pwlghr001
+  #################################################
+  set-prebuild-vars:
+    runs-on: latest-windows
+    outputs:
+      ov_commit_hash: ${{  inputs.ov_commit_hash }}
+      vpux_commit_hash: ${{  inputs.vpux_commit_hash }}
+      prebuild_root_url: https://gfx-assets.intel.com/artifactory
+      prebuild_asset_path: gfx-npu-assets
+      prebuild_asset_name: vpux-prebuild
+      prebuild_asset_version: ${{ steps.set-prebuild-package-name.outputs.prebuild_package_version }}
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
+      - name: Set prebuild package name
+        id: set-prebuild-package-name
         run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+          OV_GIT_COMMIT_HASH_SHORT=${OV_GIT_COMMIT_HASH:0:10}
+          VPUX_GIT_COMMIT_HASH_SHORT=${VPUX_GIT_COMMIT_HASH:0:10}
+          PREBUILD_PACKAGE_NAME="workflow-openvino-$OV_GIT_COMMIT_HASH_SHORT-vpux-$VPUX_GIT_COMMIT_HASH_SHORT"
+          echo "Set Prebuild Package_name $PREBUILD_PACKAGE_NAME"
+          echo "::set-output name=prebuild_package_version::$PREBUILD_PACKAGE_NAME"
+        shell: bash
